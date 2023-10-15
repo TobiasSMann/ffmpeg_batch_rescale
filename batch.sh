@@ -37,7 +37,7 @@ for input_file in "$input_dir"/*; do
         creation_date=$(stat -c %y "$input_file")
         
         # Perform the H.264 conversion while preserving the creation date and scaling to 1920 pixels wide
-        ffmpeg -i "$input_file" -vf "scale=1920:-2" -c:v libx264 -crf 23 -c:a aac -strict experimental "$output_file"
+        ffmpeg -i "$input_file" -vf "scale=iw*min(1920/iw\,1920/ih):ih*min(1920/iw\,1920/ih)" -c:v libx264 -crf 23 -c:a aac -strict experimental "$output_file"
         
         # Set the original creation date for the output file using ExifTool
         exiftool -TagsFromFile "$input_file" "-FileCreateDate>FileModifyDate" -overwrite_original "$output_file"
